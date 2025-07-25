@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Your Cab</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 15px 10px;
+      color: #333;
+    }
+
+    .container {
+      background: linear-gradient(135deg, #1e88e5, #42a5f5);
+      color: white;
+      padding: 30px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 550px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 26px;
+      margin-bottom: 25px;
+    }
+
+    .trip-cards {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px 10px;
+      border-radius: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      min-width: 150px;
+    }
+
+    .card:hover, .card.active {
+      border-color: #c8e6c9;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .card i {
+      font-size: 28px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 50%;
+      margin-bottom: 8px;
+      color: #a5d6a7;
+    }
+
+    .card-label {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    input::placeholder {
+      color: #eee;
+    }
+
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #4caf50;
+      border: none;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .hidden {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 0.5s ease;
+    }
+
+    .show {
+      max-height: 2000px;
+      opacity: 1;
+      transition: all 0.5s ease;
+    }
+
+    .hamburger {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    .hamburger div {
+      width: 30px;
+      height: 4px;
+      background-color: #333;
+      margin: 6px 0;
+      border-radius: 5px;
+    }
+
+    .footer-info {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .footer-info b {
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hamburger" onclick="toggleMenu()">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+  <div class="container">
+    <h2>Book Your Ride</h2>
+
+    <div class="trip-cards">
+      <div class="card" onclick="selectTrip('pickup', this)">
+        <i class="fas fa-map-marker-alt"></i>
+        <div class="card-label">Pickup & Drop</div>
+      </div>
+      <div class="card" onclick="selectTrip('rental', this)">
+        <i class="fas fa-clock"></i>
+        <div class="card-label">Full Day Rental</div>
+      </div>
+      <div class="card" onclick="selectTrip('outstation', this)">
+        <i class="fas fa-road"></i>
+        <div class="card-label">Outstation Trip</div>
+      </div>
+    </div>
+
+    <div id="bookingForm" class="hidden">
+      <label>Name</label>
+      <input type="text" id="name" placeholder="Enter your name" />
+
+      <label>Pickup Point</label>
+      <input type="text" id="pickup" placeholder="Enter pickup location" />
+
+      <div id="dropGroup">
+        <label>Drop Point</label>
+        <input type="text" id="drop" placeholder="Enter drop location" />
+      </div>
+
+      <div id="rentalGroup" style="display: none;">
+        <label>Rental Duration (in hours)</label>
+        <input type="number" id="rentalHours" placeholder="e.g., 8" />
+      </div>
+
+      <div id="outstationGroup" style="display: none;">
+        <label>Return Date</label>
+        <input type="date" id="returnDate" />
+      </div>
+
+      <label>Date of Journey</label>
+      <input type="date" id="date" />
+
+      <label>Time</label>
+      <input type="time" id="time" />
+
+      <label>Car Type</label>
+      <select id="car">
+        <option value="Sedan">Sedan</option>
+        <option value="Hatchback">Hatchback</option>
+        <option value="SUV">SUV</option>
+      </select>
+
+      <label>AC Preference</label>
+      <select id="ac">
+        <option value="AC">AC</option>
+        <option value="Non-AC">Non-AC</option>
+      </select>
+
+      <button onclick="sendWhatsApp()">Confirm Booking</button>
+    </div>
+  </div>
+
+  <div class="footer-info">
+    <p><b>Owned by Subodh Shelke</b><br/>
+    Contact: <b>7498672801</b><br/>
+    Email: <b>subodhshelke000@gmail.com</b></p>
+  </div>
+
+  <script>
+    let selectedTrip = "";
+
+    function selectTrip(type, element) {
+      selectedTrip = type;
+
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(c => c.classList.remove('active'));
+      element.classList.add('active');
+
+      const form = document.getElementById("bookingForm");
+      form.classList.remove("hidden");
+      form.classList.add("show");
+
+      document.getElementById("dropGroup").style.display = (type === "pickup") ? "block" : "none";
+      document.getElementById("rentalGroup").style.display = (type === "rental") ? "block" : "none";
+      document.getElementById("outstationGroup").style.display = (type === "outstation") ? "block" : "none";
+    }
+
+    function sendWhatsApp() {
+      const name = document.getElementById("name").value;
+      const pickup = document.getElementById("pickup").value;
+      const drop = document.getElementById("drop").value;
+      const rental = document.getElementById("rentalHours").value;
+      const returnDate = document.getElementById("returnDate").value;
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+      const car = document.getElementById("car").value;
+      const ac = document.getElementById("ac").value;
+
+      let message = `*Booking Details*\n\nName: ${name}\nPickup: ${pickup}`;
+
+      if (selectedTrip === "pickup") {
+        message += `\nDrop: ${drop}`;
+      } else if (selectedTrip === "rental") {
+        message += `\nRental Hours: ${rental}`;
+      } else if (selectedTrip === "outstation") {
+        message += `\nReturn Date: ${returnDate}`;
+      }
+
+      message += `\nDate: ${date}\nTime: ${time}\nCar: ${car}\nAC: ${ac}\nTrip Type: ${selectedTrip}`;
+
+      const encoded = encodeURIComponent(message);
+      window.open(`https://wa.me/917498672801?text=${encoded}`, "_blank");
+    }
+
+    function toggleMenu() {
+      alert("Menu clicked! (navigation coming soon)");
+    }
+  </script>
+</body>
+</html>
